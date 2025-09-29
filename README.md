@@ -24,6 +24,17 @@ Maybe tests/ is for internal tests on the code, like regular unit tests
 
 And maybe stories/ is where we add richer stories
 
+yes, I like this. So:
+
+stories is where the integration tests live
+src is for all supporting code
+test is for internal unit tests
+
+If you want to understand merge behaviour, go to stories
+If you want to write code to maintain this repo, go to src/test
+
+love it
+
 ## Getting Started
 
 To install dependencies:
