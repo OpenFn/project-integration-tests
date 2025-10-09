@@ -1,6 +1,7 @@
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
 import { test as bunTest } from "bun:test";
+import type Project from "@openfn/project";
 
 export type TestContext = {};
 
@@ -16,31 +17,41 @@ class Context {
   async createFile(filename: string, contents = "") {
     return Bun.write(path.join(this.root, filename), contents);
   }
+  async serialize(name: string, project: Project) {
+    const files = project.serialize("fs");
+    console.log(files);
+    return files;
+  }
 }
 
 function init(filename: string /* import.meta.filename */) {
+  const wrapTest = (name: string, fn: (ctx: Context) => void) => {
+    //  register with bun - this must be synchronous!
+    return async () => {
+      // So do all async setup inside the test
+      const safename = getTestName(name);
+      const root = await setupTestDir(folder, file, safename);
+
+      // Now run the user test, passing in context
+      return fn(new Context(root, safename));
+    };
+  };
+
   const folder = path.basename(path.dirname(filename));
   const file = path.basename(filename, ".test.ts");
 
   // Util to wrap tests in some infrastructure to generate a working folder
   // TODO how can I include a describe in the path?
   const test = async (name: string, fn: (ctx: Context) => void) => {
-    //  register with bun - this must be synchronous!
-    return bunTest(name, async () => {
-      // So do all async setup inside the test
-      const safename = getTestName(name);
-      const root = await setupTestDir(folder, file, safename);
-
-      // Now run the user test, passing in context
-      fn(new Context(root, safename));
-    });
+    return bunTest(name, wrapTest(name, fn));
   };
 
   test.skip = (name: string, fn: (ctx: Context) => void) =>
     bunTest.skip(name, fn);
 
-  // TODO
-  // test.only =
+  test.only = async (name: string, fn: (ctx: Context) => void) => {
+    return bunTest.only(name, wrapTest(name, fn));
+  };
 
   return test;
 }
