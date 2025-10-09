@@ -17,10 +17,11 @@ class Context {
   async createFile(filename: string, contents = "") {
     return Bun.write(path.join(this.root, filename), contents);
   }
+  // serialize a project into a yaml file
   async serialize(name: string, project: Project) {
-    const files = project.serialize("fs");
-    console.log(files);
-    return files;
+    const yaml = project.serialize("state"); // v1 state file (v2 state will be better)
+    await this.createFile(`${name}.yaml`, yaml);
+    return yaml;
   }
 }
 
@@ -28,6 +29,8 @@ function init(filename: string /* import.meta.filename */) {
   const wrapTest = (name: string, fn: (ctx: Context) => void) => {
     //  register with bun - this must be synchronous!
     return async () => {
+      // TODO probably maybe clean the target dir before runnning?
+
       // So do all async setup inside the test
       const safename = getTestName(name);
       const root = await setupTestDir(folder, file, safename);
