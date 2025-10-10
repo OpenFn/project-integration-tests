@@ -57,7 +57,7 @@ async function gen(ctx, name, wf: string) {
 }
 
 test("should merge two workflows", async (ctx) => {
-  const main = await gen(
+  await gen(
     ctx,
     "main",
     `
@@ -65,7 +65,7 @@ test("should merge two workflows", async (ctx) => {
       y-z(adaptor=http)
 `
   );
-  const staging = gen(
+  gen(
     ctx,
     "staging",
     `

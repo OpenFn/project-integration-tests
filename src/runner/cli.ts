@@ -21,7 +21,10 @@ export const merge = async (
 
   // init a project file to keep the CLI happy
   // (TODO: we shouldn't need to do this, or at least just run init)
-  const openfnyml = `projectsRoot: .`;
+  const openfnyml = `
+dirs:
+  projects: .
+  `;
   await Bun.write(path.join(options.dir, "openfn.yaml"), openfnyml);
 
   // Checkout the target so we're ready to merge
