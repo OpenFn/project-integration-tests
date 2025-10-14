@@ -57,7 +57,6 @@ test("should merge two workflows", async (ctx) => {
   `
   );
 
-  // TODO need to pass a UUID map for each node here
   const expectedUUIDs = main.getUUIDMap();
   const expected = await gen(
     ctx,
