@@ -1,5 +1,5 @@
 import path from "node:path";
-import type Project from "@openfn/project";
+import Project from "@openfn/project";
 import { $ } from "bun";
 
 type Options = {
@@ -31,10 +31,9 @@ dirs:
   await $`${cmd} checkout ${source}`.cwd(options.dir);
 
   // now merge
-  const x = await $`${cmd} merge ${target}`.cwd(options.dir);
+  await $`${cmd} merge ${target}`.cwd(options.dir);
 
-  console.log(x.text());
-
-  // Now return the merged file
-  return Bun.file(path.resolve(options.dir, target)).text();
+  // Now return a project based on the filesystem
+  // (remember that merge doesn't update the project file)
+  return Project.from("fs", { root: options.dir });
 };

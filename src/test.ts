@@ -5,7 +5,7 @@ import type Project from "@openfn/project";
 
 export type TestContext = {};
 
-class Context {
+export class Context {
   /** Root folder for this test */
   root: string;
   /** Safe/escaped name of this test */

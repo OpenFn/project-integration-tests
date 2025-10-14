@@ -1,63 +1,46 @@
-import Project from "@openfn/project";
-import { expect } from "bun:test";
+import Project, { generateProject } from "@openfn/project";
+import { afterEach } from "bun:test";
 
-import initTest from "../../src/test";
+import initTest, { Context } from "../../src/test";
 import loadRunner from "../../src/runner";
+import { deepEquals } from "bun";
 
 const test = initTest(import.meta.filename);
 
 // This will load a CLI or Lightning runner based on the run command
 const runner = loadRunner();
 
+let seed = 0;
+
 // serialize a project based on a workflow spec
-// will be written to a file like "<name>.project.yaml"
-// ie, "source.project.yaml"
-async function gen(ctx, name, wf: string) {
-  const proj = new Project({
-    name: "jam",
-    workflows: [
-      {
-        name: "a",
-        steps: [
-          {
-            id: "x",
-            name: "x",
-            expression: "x()",
-            next: {
-              y: {
-                openfn: {
-                  uuid: 5,
-                },
-              },
-            },
-            openfn: {
-              uuid: 2,
-            },
-          },
-          {
-            id: "y",
-            name: "y",
-            expression: "y()",
-            openfn: {
-              uuid: 2,
-            },
-          },
-        ],
-        openfn: {
-          uuid: 1,
-        },
-      },
-    ],
+// will be written to a file like "<name>.yaml"
+// ie, "source.yaml"
+async function gen(ctx: Context, name: string, wf: string, uuidMap?: any) {
+  const proj = generateProject(name, [wf], {
+    openfnUuid: true,
+    uuidSeed: ++seed,
+    uuidMap: uuidMap ? [uuidMap] : [],
   });
-  proj.openfn = {
-    uuid: 66,
-  };
   await ctx.serialize(name, proj);
   return proj;
 }
 
+afterEach(() => {
+  seed = 0;
+});
+
+/**
+ * This function will ensure that project a is the same as project b
+ * This is simply a deep equals on the json representation (which includes uuids)
+ */
+const projectEquals = (a: Project, b: Project) => {
+  const a_json = a.serialize("json");
+  const b_json = b.serialize("json");
+  return deepEquals(a_json, b_json);
+};
+
 test("should merge two workflows", async (ctx) => {
-  await gen(
+  const main = await gen(
     ctx,
     "main",
     `
@@ -65,7 +48,7 @@ test("should merge two workflows", async (ctx) => {
       y-z(adaptor=http)
 `
   );
-  gen(
+  await gen(
     ctx,
     "staging",
     `
@@ -73,13 +56,17 @@ test("should merge two workflows", async (ctx) => {
         y-z(adaptor=dhis2)
   `
   );
-  const expected = gen(
+
+  // TODO need to pass a UUID map for each node here
+  const expectedUUIDs = main.getUUIDMap();
+  const expected = await gen(
     ctx,
     "expected",
     `
         x-y
         y-z(adaptor=dhis2)
-      `
+      `,
+    expectedUUIDs
   );
   // this will use CLI or lightning, based on test config
   // This needs to return the merged statefile
@@ -87,10 +74,5 @@ test("should merge two workflows", async (ctx) => {
     dir: ctx.root,
   });
 
-  console.log(result);
-
-  // Now we need to read the pr
-
-  //   // custom assertion
-  //   projectEquals(result, expected);
+  projectEquals(result, expected);
 });
