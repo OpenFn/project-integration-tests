@@ -33,8 +33,6 @@ test is for internal unit tests
 If you want to understand merge behaviour, go to stories
 If you want to write code to maintain this repo, go to src/test
 
-love it
-
 ## Getting Started
 
 To install dependencies:
@@ -50,3 +48,9 @@ bun run index.ts
 ```
 
 This project was created using `bun init` in bun v1.2.22. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+
+To run the test stories with openfnx:
+
+```bash
+OPENFN_RUNNER_ARGS=cmd:openfnx bun stories:cli
+```

@@ -4,7 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "clean": "rimraf tmp"
+    "clean": "rimraf tmp",
+    "stories": "bun test stories --preload ./src/preload.ts",
+    "stories:cli": "OPENFN_RUNNER=cli bun stories",
+    "stories:lightning": "OPENFN_RUNNER=lighting bun stories"
   },
   "devDependencies": {
     "@types/bun": "latest"

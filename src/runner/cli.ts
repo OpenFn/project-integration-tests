@@ -2,8 +2,35 @@ import path from "node:path";
 import Project from "@openfn/project";
 import { $ } from "bun";
 
+let command = "openfn";
+let logOption = "none";
+
+// Pass OPENFN_RUNNER_ARGS=cmd:openfnx to use openfnx
+const opts = process.env.OPENFN_RUNNER_ARGS ?? "";
+if (opts) {
+  const options: any = opts
+    .split(",")
+    .map((o) => o.split(":"))
+    .map(([key, value]: string[]) => ({ [key]: value }))
+    .reduce((acc, next) => Object.assign(acc, next));
+
+  if (options.cmd) {
+    command = options.cmd;
+  }
+  if (options.log) {
+    logOption = options.log;
+  }
+}
+
+const log = `--log=${logOption}`;
+
 type Options = {
   dir: string; // root dir to run in
+};
+
+export const welcome = () => {
+  console.log("⌨️  Executing tests with the CLI runner");
+  console.log(`Using command "${command}" to execute`);
 };
 
 // run commands through the CLI
@@ -14,11 +41,6 @@ export const merge = async (
   target: string,
   options: Options
 ) => {
-  // TODO: take as an argument or option the command name
-  const cmd = "openfnx";
-  // I'm using openfnx for now to run locally
-  // source and target actually need to be paths
-
   // init a project file to keep the CLI happy
   // (TODO: we shouldn't need to do this, or at least just run init)
   const openfnyml = `
@@ -28,10 +50,11 @@ dirs:
   await Bun.write(path.join(options.dir, "openfn.yaml"), openfnyml);
 
   // Checkout the target so we're ready to merge
-  await $`${cmd} checkout ${source}`.cwd(options.dir);
+  console.log(`${command} checkout ${source} ${log}`);
+  await $`${command} checkout ${source} ${log}`.cwd(options.dir);
 
   // now merge
-  await $`${cmd} merge ${target}`.cwd(options.dir);
+  await $`${command} merge ${target} ${log}`.cwd(options.dir);
 
   // Now return a project based on the filesystem
   // (remember that merge doesn't update the project file)
