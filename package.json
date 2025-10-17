@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "clean": "rimraf tmp",
+    "test:unit": "bun test ./test",
     "stories": "bun test stories --preload ./src/preload.ts",
     "stories:cli": "OPENFN_RUNNER=cli bun stories",
     "stories:lightning": "OPENFN_RUNNER=lighting bun stories"

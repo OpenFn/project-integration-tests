@@ -1,0 +1,10 @@
+name: stories
+jobs:
+  node:
+    name: stories-node
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --global @openfn/cli
+      - run: bun stories:cli
