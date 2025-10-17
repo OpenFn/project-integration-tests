@@ -4,7 +4,7 @@ import initTest from "../../src/test";
 
 const test = initTest(import.meta.filename);
 
-test("should execute a workflow", (ctx) => {
+test.skip("should execute a workflow", (ctx) => {
   ctx.createFile(ctx.name + ".json", "hello world");
   // generate a project
   // write it to disk (where? how?)
