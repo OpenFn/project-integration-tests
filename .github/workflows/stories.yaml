@@ -1,4 +1,7 @@
 name: stories
+
+on: pull_request
+
 jobs:
   node:
     name: stories-node
