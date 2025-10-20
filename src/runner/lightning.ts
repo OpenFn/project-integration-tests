@@ -3,9 +3,6 @@ import Project from "@openfn/project";
 import { $ } from "bun";
 import { loadArgs } from "./util";
 
-console.log(process.env.OPENFN_RUNNER_ARGS);
-console.log(process.env);
-
 const options = loadArgs();
 
 const lightningPath = options.lng;

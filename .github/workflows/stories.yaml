@@ -17,6 +17,8 @@ jobs:
     name: stories-lightning
     runs-on: ubuntu-latest
     steps:
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
       - uses: actions/checkout@v4
       - name: Checkout Lightning
         uses: actions/checkout@v2
