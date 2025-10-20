@@ -11,7 +11,7 @@ if (opts) {
   const options: any = opts
     .split(",")
     .map((o) => o.split(":"))
-    .map(([key, value]: string[]) => ({ [key]: value }))
+    .map(([key, value]: string[]) => ({ [key!]: value }))
     .reduce((acc, next) => Object.assign(acc, next));
 
   if (options.cmd) {
