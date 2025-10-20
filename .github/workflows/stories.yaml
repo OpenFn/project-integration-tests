@@ -31,6 +31,6 @@ jobs:
         working-directory: /resources/lightning
 
       - env:
-          - OPENFN_RUNNER_ARGS: lng:/resources/lightning
+          - OPENFN_RUNNER_ARGS: "lng:/resources/lightning"
       # TMP
       - run: bun test test/runners/lightning.test.ts
