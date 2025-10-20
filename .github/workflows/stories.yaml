@@ -22,14 +22,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: openfn/lightning
-          path: /resources/lightning
+          path: resources/lightning
       - uses: erlef/setup-elixir@v1
         with:
           otp-version: 26
           elixir-version: "1.18.3"
       - run: mix deps.get
-        working-directory: /resources/lightning
+        working-directory: resources/lightning
 
       - run: bun test test/runners/lightning.test.ts
         env:
-          OPENFN_RUNNER_ARGS: lng:/resources/lightning
+          OPENFN_RUNNER_ARGS: lng:resources/lightning
