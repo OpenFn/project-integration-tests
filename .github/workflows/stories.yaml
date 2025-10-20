@@ -30,6 +30,6 @@ jobs:
       - run: mix deps.get
         working-directory: /resources/lightning
 
-      - env:
-          OPENFN_RUNNER_ARGS: "lng:/resources/lightning"
-        run: bun test test/runners/lightning.test.t
+      - run: bun test test/runners/lightning.test.ts
+        env:
+          OPENFN_RUNNER_ARGS: lng:/resources/lightning
