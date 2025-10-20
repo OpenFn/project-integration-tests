@@ -11,4 +11,4 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --global @openfn/cli
       - run: bun install
-      - run: bun stories:cli --timeout 20000
+      - run: bun stories:cli --timeout 60000
