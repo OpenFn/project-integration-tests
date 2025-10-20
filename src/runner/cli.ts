@@ -41,9 +41,6 @@ export const merge = async (
   target: string,
   options: Options
 ) => {
-  await $`pwd`.cwd(options.dir);
-  await $`ls`.cwd(options.dir);
-
   // init a project file to keep the CLI happy
   // (TODO: we shouldn't need to do this, or at least just run init)
   const openfnyml = `
