@@ -11,7 +11,7 @@ if (opts) {
   const options: any = opts
     .split(",")
     .map((o) => o.split(":"))
-    .map(([key, value]: string[]) => ({ [key]: value }))
+    .map(([key, value]: string[]) => ({ [key!]: value }))
     .reduce((acc, next) => Object.assign(acc, next));
 
   if (options.cmd) {
@@ -41,6 +41,9 @@ export const merge = async (
   target: string,
   options: Options
 ) => {
+  await $`pwd`.cwd(options.dir);
+  await $`ls`.cwd(options.dir);
+
   // init a project file to keep the CLI happy
   // (TODO: we shouldn't need to do this, or at least just run init)
   const openfnyml = `

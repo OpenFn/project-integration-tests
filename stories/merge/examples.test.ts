@@ -39,10 +39,6 @@ const projectEquals = (a: Project, b: Project) => {
   return deepEquals(a_json, b_json);
 };
 
-test("fail", async (ctx) => {
-  throw new Error("fail");
-});
-
 test("should merge two workflows", async (ctx) => {
   const main = await gen(
     ctx,
