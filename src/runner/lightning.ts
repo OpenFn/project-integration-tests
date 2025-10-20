@@ -7,6 +7,11 @@ const options = loadArgs();
 
 const lightningPath = options.lng;
 
+if (!lightningPath) {
+  console.error('"LIGHTNING PATH NOT SET');
+  process.exit(1);
+}
+
 // Get an absolute file path relative to
 const file = (ctx, name) => {};
 
