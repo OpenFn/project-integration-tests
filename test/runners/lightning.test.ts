@@ -1,7 +1,7 @@
 import initTest, { Context } from "../../src/test";
 import * as runner from "../../src/runner/lightning";
 import { deepEquals } from "bun";
-import { expect, test } from "bun:test";
+import { expect } from "bun:test";
 
 const test = initTest(import.meta.filename);
 
