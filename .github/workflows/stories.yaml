@@ -3,8 +3,8 @@ name: stories
 on: pull_request
 
 jobs:
-  node:
-    name: stories-node
+  cli:
+    name: stories-cli
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -12,3 +12,30 @@ jobs:
       - run: bun install --global @openfn/cli
       - run: bun install
       - run: bun stories:cli --timeout 60000
+
+  lightning:
+    name: stories-lightning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Checkout Lightning
+        uses: actions/checkout@v2
+        with:
+          repository: openfn/lightning
+          path: resources/lightning
+      - uses: erlef/setup-elixir@v1
+        with:
+          otp-version: 26
+          elixir-version: "1.18.3"
+      - run: sudo apt-get install -y libsodium-dev
+      - run: mix deps.get
+        working-directory: resources/lightning
+
+      - run: mix compile
+        working-directory: resources/lightning
+
+      - run: bun test test/runners/lightning.test.ts --timeout 60000
+        env:
+          OPENFN_RUNNER_ARGS: lng:resources/lightning

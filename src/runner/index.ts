@@ -8,6 +8,7 @@ const { OPENFN_RUNNER } = process.env;
 
 export type Runner = {
   welcome(): void;
+  test(): void;
   merge(source: FilePath, target: FilePath, options?: any): Project;
 };
 

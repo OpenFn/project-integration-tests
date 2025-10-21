@@ -54,3 +54,9 @@ To run the test stories with openfnx:
 ```bash
 OPENFN_RUNNER_ARGS=cmd:openfnx bun stories:cli
 ```
+
+To run lightning
+
+```bash
+OPENFN_RUNNER_ARGS=lng:/home/joe/repo/openfn/lightning bun stories:lightning
+```

@@ -1,26 +1,12 @@
 import path from "node:path";
 import Project from "@openfn/project";
 import { $ } from "bun";
+import { loadArgs } from "./util";
 
-let command = "openfn";
-let logOption = "none";
+const options = loadArgs();
 
-// Pass OPENFN_RUNNER_ARGS=cmd:openfnx to use openfnx
-const opts = process.env.OPENFN_RUNNER_ARGS ?? "";
-if (opts) {
-  const options: any = opts
-    .split(",")
-    .map((o) => o.split(":"))
-    .map(([key, value]: string[]) => ({ [key!]: value }))
-    .reduce((acc, next) => Object.assign(acc, next));
-
-  if (options.cmd) {
-    command = options.cmd;
-  }
-  if (options.log) {
-    logOption = options.log;
-  }
-}
+let command = options.cmd ?? "openfn";
+let logOption = options.log ?? "none";
 
 const log = `--log=${logOption}`;
 

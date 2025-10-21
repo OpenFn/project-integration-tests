@@ -69,6 +69,8 @@ test("should merge two workflows", async (ctx) => {
   );
   // this will use CLI or lightning, based on test config
   // This needs to return the merged statefile
+  // TODO should write state.json files,
+  // so that CLI and Prov use _exactly_ the same input
   const result = await runner.merge("staging.yaml", "main.yaml", {
     dir: ctx.root,
   });
