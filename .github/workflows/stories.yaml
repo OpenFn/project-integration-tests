@@ -33,6 +33,9 @@ jobs:
       - run: mix deps.get
         working-directory: resources/lightning
 
-      - run: bun test test/runners/lightning.test.ts --timeout 60000
+      - run: mix hex.compile
+        working-directory: resources/lightning
+
+      - run: bun test test/runners/lightning.test.ts --timeout 120000
         env:
           OPENFN_RUNNER_ARGS: lng:resources/lightning
