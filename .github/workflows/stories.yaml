@@ -33,7 +33,7 @@ jobs:
       - run: mix deps.get
         working-directory: resources/lightning
 
-      - run: mix hex.compile
+      - run: mix compile
         working-directory: resources/lightning
 
       - run: bun test test/runners/lightning.test.ts --timeout 120000
