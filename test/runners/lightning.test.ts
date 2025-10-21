@@ -8,8 +8,5 @@ const test = initTest(import.meta.filename);
 test("should run a mix command", async (ctx) => {
   const result = await runner.test();
 
-  // expect the first migration to be present
-  const first = "20220131123309  create_jobs";
-
-  expect(result).toMatch(first);
+  expect(result).toMatch("compiled with Erlang/OTP");
 });

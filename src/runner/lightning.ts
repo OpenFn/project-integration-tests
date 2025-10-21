@@ -20,9 +20,7 @@ export const welcome = () => {
 };
 
 export const test = async () => {
-  console.log({ lightningPath });
-  await $`ls -a`.cwd(lightningPath);
-  const result = await $`mix ecto.migrations`.cwd(lightningPath);
+  const result = await $`mix --version`.cwd(lightningPath);
 
   return result.text();
 };
