@@ -29,6 +29,7 @@ jobs:
         with:
           otp-version: 26
           elixir-version: "1.18.3"
+      - run: sudo apt-get install -y libsodium-dev
       - run: mix deps.get
         working-directory: resources/lightning
 
