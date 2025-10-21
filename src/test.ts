@@ -19,9 +19,9 @@ export class Context {
   }
   // serialize a project into a yaml file
   async serialize(name: string, project: Project) {
-    const yaml = project.serialize("state"); // v1 state file (v2 state will be better)
-    await this.createFile(`${name}.yaml`, yaml);
-    return yaml;
+    const state = project.serialize("state", { format: "json" }); // v1 state file (v2 state will be better)
+    await this.createFile(`${name}.json`, JSON.stringify(state, null, 2));
+    return state;
   }
 }
 
