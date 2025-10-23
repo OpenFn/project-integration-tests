@@ -1,7 +1,7 @@
 import Project, { generateProject } from "@openfn/project";
 import { afterEach } from "bun:test";
 
-import initTest, { Context } from "../../src/test";
+import initTest, { Context, gen } from "../../src/test";
 import loadRunner from "../../src/runner";
 import { deepEquals } from "bun";
 
@@ -11,19 +11,6 @@ const test = initTest(import.meta.filename);
 const runner = loadRunner();
 
 let seed = 0;
-
-// serialize a project based on a workflow spec
-// will be written to a file like "<name>.yaml"
-// ie, "source.yaml"
-async function gen(ctx: Context, name: string, wf: string, uuidMap?: any) {
-  const proj = generateProject(name, [wf], {
-    openfnUuid: true,
-    uuidSeed: ++seed,
-    uuidMap: uuidMap ? [uuidMap] : [],
-  });
-  await ctx.serialize(name, proj);
-  return proj;
-}
 
 afterEach(() => {
   seed = 0;

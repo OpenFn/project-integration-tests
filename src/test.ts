@@ -91,3 +91,21 @@ export const createFile = async (
   console.log(" >> ", path.join(context.root, filename));
   await Bun.write(path.join(context.root, filename), contents);
 };
+
+// serialize a project based on a workflow spec
+// will be written to a file like "<name>.yaml"
+// ie, "source.yaml"
+export async function gen(
+  ctx: Context,
+  name: string,
+  wf: string,
+  uuidMap?: any
+) {
+  const proj = generateProject(name, [wf], {
+    openfnUuid: true,
+    uuidSeed: ++seed,
+    uuidMap: uuidMap ? [uuidMap] : [],
+  });
+  await ctx.serialize(name, proj);
+  return proj;
+}
