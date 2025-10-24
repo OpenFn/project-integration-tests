@@ -19,8 +19,30 @@ export const welcome = () => {
   console.log("⚡️  Executing tests with the Lightning runner");
 };
 
+type Options = {
+  dir: string; // root dir to run in
+};
+
 export const test = async () => {
   const result = await $`mix --version`.cwd(lightningPath);
 
   return result.text();
+};
+
+export const merge = async (
+  source: string,
+  target: string,
+  options: Options
+) => {
+  const sourceAbs = path.resolve(options.dir, source);
+  const targetAbs = path.resolve(options.dir, target);
+  const result =
+    await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs}`.cwd(
+      lightningPath
+    );
+  console.log({ result: result.text() });
+
+  // this returns us a new state file
+
+  return Project.from("state", result);
 };
