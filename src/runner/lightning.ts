@@ -2,6 +2,7 @@ import path from "node:path";
 import Project from "@openfn/project";
 import { $ } from "bun";
 import { loadArgs } from "./util";
+import { readFile } from "node:fs/promises";
 
 const options = loadArgs();
 
@@ -34,13 +35,16 @@ export const merge = async (
   target: string,
   options: Options
 ) => {
-  const sourceAbs = path.resolve(options.dir, source);
-  const targetAbs = path.resolve(options.dir, target);
-  const result =
-    await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs}`.cwd(
-      lightningPath
-    );
-  console.log({ result: result.text() });
+  const sourceAbs = path.resolve(options.dir, source + ".json");
+  const targetAbs = path.resolve(options.dir, target + ".json");
+  const outputAbs = path.resolve(options.dir, "merged.json");
+
+  await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs} -o ${outputAbs}`.cwd(
+    lightningPath
+  );
+
+  const resultRaw = await readFile(outputAbs, "utf8");
+  const result = JSON.parse(resultRaw);
 
   // this returns us a new state file
 

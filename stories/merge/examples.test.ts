@@ -44,7 +44,7 @@ test("should merge two workflows", async (ctx) => {
     ctx,
     "main",
     `
-      x-y
+      t(type=webhook)-y
       y-z(adaptor=http)
 `
   );
@@ -52,7 +52,7 @@ test("should merge two workflows", async (ctx) => {
     ctx,
     "staging",
     `
-        x-y
+        t(type=webhook)-y
         y-z(adaptor=dhis2)
   `
   );
@@ -62,7 +62,7 @@ test("should merge two workflows", async (ctx) => {
     ctx,
     "expected",
     `
-        x-y
+        t(type=webhook)-y
         y-z(adaptor=dhis2)
       `,
     expectedUUIDs
