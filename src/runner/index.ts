@@ -1,4 +1,5 @@
 import * as cli from "./cli";
+import * as lightning from "./lightning";
 
 import type Project from "@openfn/project";
 
@@ -19,6 +20,9 @@ export default (): Runner => {
 
   if (mode === "cli") {
     return cli as Runner;
+  }
+  if (mode === "lightning") {
+    return lightning as Runner;
   }
 
   throw new Error(`Runner ${mode} not supported`);
