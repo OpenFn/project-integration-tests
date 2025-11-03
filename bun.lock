@@ -4,7 +4,7 @@
     "": {
       "name": "project-merge-test",
       "dependencies": {
-        "@openfn/project": "^0.6.0",
+        "@openfn/project": "^0.7.1",
         "ava": "^6.4.1",
         "rimraf": "^6.0.1",
       },
@@ -39,11 +39,11 @@
 
     "@nodelib/fs.walk": ["@nodelib/fs.walk@1.2.8", "", { "dependencies": { "@nodelib/fs.scandir": "2.1.5", "fastq": "^1.6.0" } }, "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg=="],
 
-    "@openfn/lexicon": ["@openfn/lexicon@1.2.4", "", { "dependencies": { "source-map": "^0.7.6" } }, "sha512-oVURd5wAz8A5rkGmDQXGcei4C07UjE8jmHXMoO24QFAmXLu0QxW/hFBsD4Yqde0Wb/5Wbp4ZiyX0jNXuq+JZLg=="],
+    "@openfn/lexicon": ["@openfn/lexicon@1.2.5", "", { "dependencies": { "source-map": "^0.7.6" } }, "sha512-wd0g8plBhqW9oI+1fCrf7VxpGrWDMQovFQUO6IJNAkUsdJtc+r3HVqF9QnEABfzmHiPbVQnJ/0OO3FR6PR9qYQ=="],
 
     "@openfn/logger": ["@openfn/logger@1.0.6", "", { "dependencies": { "@inquirer/confirm": "2.0.6", "chalk": "^5.6.2", "fast-safe-stringify": "^2.1.1", "figures": "^5.0.0" } }, "sha512-CPWp2pT4scb6DVeVfACSFRao1FRRXJrEAhan4/ea4WdCdxJkmp3nFLGlwOgyALMVjGkTwIzec1FnVYrqvv/d5Q=="],
 
-    "@openfn/project": ["@openfn/project@0.6.0", "", { "dependencies": { "@openfn/lexicon": "^1.2.4", "@openfn/logger": "1.0.6", "glob": "^11.0.2", "lodash": "^4.17.21", "lodash-es": "^4.17.21", "ohm-js": "^17.2.1", "yaml": "^2.2.2" } }, "sha512-sCHgwXOBstxf0Cu0kLw9b4wLg2eV5wjRsK3VdVQ+GlwwbYTuyWUWfiSBNM01M7JDdaSwSRsNuz69erf7m4WSHA=="],
+    "@openfn/project": ["@openfn/project@0.7.1", "", { "dependencies": { "@openfn/lexicon": "^1.2.5", "@openfn/logger": "1.0.6", "glob": "^11.0.2", "human-id": "^4.1.1", "lodash": "^4.17.21", "lodash-es": "^4.17.21", "ohm-js": "^17.2.1", "yaml": "^2.2.2" } }, "sha512-Pcu9KREnKhdnQn9z//Mkh8znU3pqWd61nb22qGebVecxgKjgBZFlY/8JFBmg5rR6OCamGCA/LQ7RJiCs4pKiIw=="],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
@@ -202,6 +202,8 @@
     "has-flag": ["has-flag@4.0.0", "", {}, "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ=="],
 
     "https-proxy-agent": ["https-proxy-agent@7.0.6", "", { "dependencies": { "agent-base": "^7.1.2", "debug": "4" } }, "sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw=="],
+
+    "human-id": ["human-id@4.1.2", "", { "bin": { "human-id": "dist/cli.js" } }, "sha512-v/J+4Z/1eIJovEBdlV5TYj1IR+ZiohcYGRY+qN/oC9dAfKzVT023N/Bgw37hrKCoVRBvk3bqyzpr2PP5YeTMSg=="],
 
     "ignore": ["ignore@7.0.5", "", {}, "sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg=="],
 
