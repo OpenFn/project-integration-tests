@@ -1,7 +1,10 @@
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
-import { test as bunTest } from "bun:test";
-import type Project from "@openfn/project";
+import { test as bunTest, expect } from "bun:test";
+import { deepEquals } from "bun";
+import Project, { generateProject } from "@openfn/project";
+import loadRunner from "./runner";
+import { equal } from "node:assert";
 
 export type TestContext = {};
 
@@ -99,6 +102,7 @@ export async function gen(
   ctx: Context,
   name: string,
   wf: string,
+  seed: number,
   uuidMap?: any
 ) {
   const proj = generateProject(name, [wf], {
@@ -109,3 +113,41 @@ export async function gen(
   await ctx.serialize(name, proj);
   return proj;
 }
+
+export const projectEquals = (a: Project, b: Project) => {
+  const a_json = a.serialize("json");
+  const b_json = b.serialize("json");
+  expect(a_json).toEqual(b_json);
+};
+
+export const testMerge = async (
+  ctx: Context,
+  main: string,
+  staging: string,
+  expected: string,
+  newUuids = {}
+) => {
+  let seed = 0;
+  const runner = loadRunner();
+
+  const mainProject = await gen(ctx, "main", main, seed);
+  await gen(ctx, "staging", staging, seed);
+
+  const expectedUUIDs = mainProject.getUUIDMap();
+  Object.assign(expectedUUIDs, newUuids);
+
+  const expectedProject = await gen(
+    ctx,
+    "expected",
+    expected,
+    seed,
+    expectedUUIDs
+  );
+
+  const result = await runner.merge("staging", "main", {
+    dir: ctx.root,
+  });
+  await ctx.serialize("result", result);
+
+  projectEquals(result, expectedProject);
+};

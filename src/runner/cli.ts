@@ -36,10 +36,10 @@ dirs:
   await Bun.write(path.join(options.dir, "openfn.yaml"), openfnyml);
 
   // Checkout the target so we're ready to merge
-  await $`${command} checkout ${source}.json ${log}`.cwd(options.dir);
+  await $`${command} checkout ${source}.json ${log}`.cwd(options.dir).quiet();
 
   // now merge
-  await $`${command} merge ${target}.json ${log}`.cwd(options.dir);
+  await $`${command} merge ${target}.json ${log}`.cwd(options.dir).quiet();
 
   // Now return a project based on the filesystem
   // (remember that merge doesn't update the project file)

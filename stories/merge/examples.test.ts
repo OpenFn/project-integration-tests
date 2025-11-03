@@ -1,7 +1,7 @@
 import Project, { generateProject } from "@openfn/project";
 import { afterEach } from "bun:test";
 
-import initTest, { Context, gen } from "../../src/test";
+import initTest, { gen } from "../../src/test";
 import loadRunner from "../../src/runner";
 import { deepEquals } from "bun";
 
@@ -23,7 +23,7 @@ afterEach(() => {
 const projectEquals = (a: Project, b: Project) => {
   const a_json = a.serialize("json");
   const b_json = b.serialize("json");
-  return deepEquals(a_json, b_json);
+  expect(a_json).toEqual(a_json, b_json);
 };
 
 test("should merge two workflows", async (ctx) => {
