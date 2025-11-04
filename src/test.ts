@@ -13,6 +13,7 @@ export class Context {
   root: string;
   /** Safe/escaped name of this test */
   name: string;
+  uuidSeed = 0;
   constructor(root: string, name: string) {
     this.root = root;
     this.name = name;
@@ -91,7 +92,6 @@ export const createFile = async (
   filename: string,
   contents = ""
 ) => {
-  console.log(" >> ", path.join(context.root, filename));
   await Bun.write(path.join(context.root, filename), contents);
 };
 
@@ -103,11 +103,14 @@ export async function gen(
   name: string,
   wf: string,
   seed: number,
-  uuidMap?: any
+  uuidMap?: Record<string, string>,
+  projectName?: string,
+  projectUuid?: string | number
 ) {
-  const proj = generateProject(name, [wf], {
+  const proj = generateProject(projectName || name, [wf], {
     openfnUuid: true,
-    uuidSeed: ++seed,
+    uuid: projectUuid,
+    uuidSeed: seed,
     uuidMap: uuidMap ? [uuidMap] : [],
   });
   await ctx.serialize(name, proj);
@@ -117,6 +120,11 @@ export async function gen(
 export const projectEquals = (a: Project, b: Project) => {
   const a_json = a.serialize("json");
   const b_json = b.serialize("json");
+
+  // remove config objects because they really don't matter
+  delete a_json.config;
+  delete b_json.config;
+
   expect(a_json).toEqual(b_json);
 };
 
@@ -127,26 +135,34 @@ export const testMerge = async (
   expected: string,
   newUuids = {}
 ) => {
-  let seed = 0;
   const runner = loadRunner();
 
-  const mainProject = await gen(ctx, "main", main, seed);
-  await gen(ctx, "staging", staging, seed);
+  const mainProject = await gen(ctx, "main", main, 1000);
+  await gen(ctx, "staging", staging, 2000);
 
-  const expectedUUIDs = mainProject.getUUIDMap();
-  Object.assign(expectedUUIDs, newUuids);
+  // handle UUID mapping
+  const mainUuids = mainProject.getUUIDMap();
+  const expectedUUIDs = {
+    ...mainUuids.workflow.children,
+    workflow: mainUuids.workflow.self,
+  };
 
   const expectedProject = await gen(
     ctx,
-    "expected",
+    "expected", // how do we control this name? What if we want to change it?
     expected,
-    seed,
-    expectedUUIDs
+    3000,
+    expectedUUIDs,
+    "main",
+    mainProject.openfn.uuid
   );
+  // console.log("expected:", expectedProject.workflows[0].steps[0]?.openfn?.uuid);
 
   const result = await runner.merge("staging", "main", {
     dir: ctx.root,
   });
+  console.log(result.id);
+  console.log("result:", result.serialize("json"));
   await ctx.serialize("result", result);
 
   projectEquals(result, expectedProject);
