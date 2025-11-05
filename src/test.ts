@@ -1,10 +1,8 @@
 import path from "node:path";
-import { readFile, mkdir } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { test as bunTest, expect } from "bun:test";
-import { deepEquals } from "bun";
 import Project, { generateProject } from "@openfn/project";
 import loadRunner from "./runner";
-import { equal } from "node:assert";
 
 export type TestContext = {};
 

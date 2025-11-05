@@ -1,19 +1,15 @@
-import Project, { generateProject } from "@openfn/project";
-import { afterEach } from "bun:test";
-
-import initTest, { Context, gen } from "../../src/test";
-import loadRunner from "../../src/runner";
-import { deepEquals } from "bun";
+import initTest, { Context, testMerge as merge } from "../../../src/test";
 
 const test = initTest(import.meta.filename);
 
-// This will load a CLI or Lightning runner based on the run command
-const runner = loadRunner();
+// These are tests on "basic" merges on edges, which I define
+// as anything without an id change
 
-let seed = 0;
+// TODO need support from the generator for this
+test("merge new edge change", async (ctx: Context) => {
+  const main = `x-y x-z`;
+  const staging = `x-y x-z`;
+  const expected = `x-y`;
 
-afterEach(() => {
-  seed = 0;
+  await merge(ctx, main, staging, expected);
 });
-
-test("should merge two workflows", async (ctx) => {});

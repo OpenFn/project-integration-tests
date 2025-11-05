@@ -1,68 +1,21 @@
-import Project, { generateProject } from "@openfn/project";
-import { afterEach } from "bun:test";
+import Project from "@openfn/project";
 
-import initTest, { gen } from "../../src/test";
+import initTest, { testMerge as merge } from "../../src/test";
 import loadRunner from "../../src/runner";
-import { deepEquals } from "bun";
 
 const test = initTest(import.meta.filename);
 
-// This will load a CLI or Lightning runner based on the run command
-const runner = loadRunner();
-
-let seed = 0;
-
-afterEach(() => {
-  seed = 0;
-});
-
-/**
- * This function will ensure that project a is the same as project b
- * This is simply a deep equals on the json representation (which includes uuids)
- */
-const projectEquals = (a: Project, b: Project) => {
-  const a_json = a.serialize("json");
-  const b_json = b.serialize("json");
-  expect(a_json).toEqual(a_json, b_json);
-};
-
 test("should merge two workflows", async (ctx) => {
-  const main = await gen(
-    ctx,
-    "main",
-    `
-      x-y
-      y-z(adaptor=http)
-`
-  );
-  await gen(
-    ctx,
-    "staging",
-    `
-        x-y
-        y-z(adaptor=dhis2) # <-- changed!
-  `
-  );
+  const main = `x-y
+      y-z(adaptor=http)`;
 
-  const expectedUUIDs = main.getUUIDMap();
-  const expected = await gen(
-    ctx,
-    "expected",
-    `
-        x-y
-        y-z(adaptor=dhis2)
-      `,
-    expectedUUIDs
-  );
-  // this will use CLI or lightning, based on test config
-  // This needs to return the merged statefile
-  // TODO should write state.json files,
-  // so that CLI and Prov use _exactly_ the same input
-  const result = await runner.merge("staging", "main", {
-    dir: ctx.root,
-  });
+  const staging = `x-y
+      y-z(adaptor=dhis2) # <-- changed! `;
 
-  projectEquals(result, expected);
+  const expected = `x-y
+        y-z(adaptor=dhis2)`;
+
+  await merge(ctx, main, staging, expected);
 });
 
 /**
