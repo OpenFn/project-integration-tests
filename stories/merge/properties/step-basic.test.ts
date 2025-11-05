@@ -55,12 +55,13 @@ test("ignore random key change", async (ctx: Context) => {
   await merge(ctx, main, staging, expected3);
 });
 
-test.skip("merge a new child of the root", async (ctx: Context) => {
+test("merge a new child of the root", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-y x-z`;
   const expected = `x-y x-z`;
   const newUuids = {
-    z: 66, // TODO this is NOT right!!
+    z: 2004,
+    "x-z": 2005,
   };
 
   await merge(ctx, main, staging, expected, newUuids);
