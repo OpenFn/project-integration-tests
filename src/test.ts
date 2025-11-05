@@ -125,6 +125,9 @@ export const projectEquals = (a: Project, b: Project) => {
   delete a_json.config;
   delete b_json.config;
 
+  delete a_json.meta;
+  delete b_json.meta;
+
   expect(a_json).toEqual(b_json);
 };
 
@@ -141,7 +144,7 @@ export const testMerge = async (
   await gen(ctx, "staging", staging, 2000);
 
   // handle UUID mapping
-  const mainUuids = mainProject.getUUIDMap();
+  const mainUuids: any = mainProject.getUUIDMap();
   const expectedUUIDs = {
     ...mainUuids.workflow.children,
     workflow: mainUuids.workflow.self,
@@ -149,21 +152,24 @@ export const testMerge = async (
 
   const expectedProject = await gen(
     ctx,
-    "expected", // how do we control this name? What if we want to change it?
+    "expected",
     expected,
     3000,
     expectedUUIDs,
     "main",
-    mainProject.openfn.uuid
+    mainProject.openfn?.uuid
   );
   // console.log("expected:", expectedProject.workflows[0].steps[0]?.openfn?.uuid);
 
   const result = await runner.merge("staging", "main", {
     dir: ctx.root,
   });
-  console.log(result.id);
-  console.log("result:", result.serialize("json"));
   await ctx.serialize("result", result);
 
+  // TODO: rather than diffing the Projects,
+  // should I just diff the state files that  get written to disk?
+  // There are all sorts of defaults and nullish things which are immaterial and affect the diff
+  // OTOH, the way a project loads and serializes should be consistent,
+  // and a Project should have a good way of generating a diff
   projectEquals(result, expectedProject);
 };

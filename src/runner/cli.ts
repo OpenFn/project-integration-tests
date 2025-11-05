@@ -43,16 +43,11 @@ formats:
   // now merge
   // workflows have no history so we need to force
   // Do a weird thing and write the result to a different file
-  await $`${command} merge ${source}.json ${log} --force --output result.json`.cwd(
+  // Explicitly specify the target project because it's ambiguous (we've dumped so much stuff into the project dir!)
+  await $`${command} merge ${source}.json --base main.json ${log} --force --output-path result.json`.cwd(
     options.dir
   );
 
-  // Now return a project based on the filesystem
-  // (remember that merge doesn't update the project file)
-  // But wait, should it?
-  return Project.from("path", "result.json");
-
-  // TODO: Two issues now!
-  // Why is this writing as yaml?
-  // Why is this writing to output.json?
+  // Now return a Project based on the generated state file
+  return Project.from("path", path.resolve(options.dir, "result.json"));
 };
