@@ -1,5 +1,5 @@
 import path from "node:path";
-import { mkdir } from "node:fs/promises";
+import { readFile, mkdir } from "node:fs/promises";
 import { test as bunTest, expect } from "bun:test";
 import { deepEquals } from "bun";
 import Project, { generateProject } from "@openfn/project";
@@ -20,6 +20,13 @@ export class Context {
   }
   async createFile(filename: string, contents = "") {
     return Bun.write(path.join(this.root, filename), contents);
+  }
+  async loadFile(fileName: string) {
+    let file = await Bun.file(path.join(this.root, fileName)).text();
+    if (fileName.endsWith(".json")) {
+      file = JSON.parse(file);
+    }
+    return file;
   }
   // serialize a project into a yaml file
   async serialize(name: string, project: Project) {
@@ -148,9 +155,10 @@ export const testMerge = async (
   const expectedUUIDs = {
     ...mainUuids.workflow.children,
     workflow: mainUuids.workflow.self,
+    ...newUuids,
   };
 
-  const expectedProject = await gen(
+  await gen(
     ctx,
     "expected",
     expected,
@@ -166,10 +174,19 @@ export const testMerge = async (
   });
   await ctx.serialize("result", result);
 
+  // Check that the serialized state files are the same
+  // Ideally I'd do something like  Project.equals(expected)
+  // But it's quite a complex operation and there are lots of defaults and
+  // falsy unset values right now, so it's quite a hard comparison
+  // Just reading the state files is basically a simpler test of the things that matter most
+  const expected_state = await ctx.loadFile("expected.json");
+  const result_state = await ctx.loadFile("result.json");
+  expect(result_state).toEqual(expected_state);
+
   // TODO: rather than diffing the Projects,
   // should I just diff the state files that  get written to disk?
   // There are all sorts of defaults and nullish things which are immaterial and affect the diff
   // OTOH, the way a project loads and serializes should be consistent,
   // and a Project should have a good way of generating a diff
-  projectEquals(result, expectedProject);
+  //projectEquals(result, expectedProject);
 };

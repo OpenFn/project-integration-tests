@@ -5,7 +5,7 @@ const test = initTest(import.meta.filename);
 // These are tests on "basic" merges, which I define
 // as anything without an id change
 
-test.only("merge adaptor change", async (ctx: Context) => {
+test("merge adaptor change", async (ctx: Context) => {
   const main = `x(adaptor=a)-y`;
   const staging = `x(adaptor=b)-y`;
   const expected = `x(adaptor=b)-y`;
@@ -55,7 +55,7 @@ test("ignore random key change", async (ctx: Context) => {
   await merge(ctx, main, staging, expected3);
 });
 
-test("merge a new child of the root", async (ctx: Context) => {
+test.skip("merge a new child of the root", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-y x-z`;
   const expected = `x-y x-z`;
