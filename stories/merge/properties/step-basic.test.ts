@@ -55,6 +55,21 @@ test("ignore random key change", async (ctx: Context) => {
   await merge(ctx, main, staging, expected3);
 });
 
+// TODO should these go into a new suite called structure-basic?
+// Like these are tests on changing the workflow structure,
+// they don't affect node properties
+test("merge a new child of a leaf", async (ctx: Context) => {
+  const main = `x-y`;
+  const staging = `x-y y-z`;
+  const expected = `x-y y-z`;
+  const newUuids = {
+    z: 2004,
+    "y-z": 2005,
+  };
+
+  await merge(ctx, main, staging, expected, newUuids);
+});
+
 test("merge a new child of the root", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-y x-z`;
@@ -62,6 +77,19 @@ test("merge a new child of the root", async (ctx: Context) => {
   const newUuids = {
     z: 2004,
     "x-z": 2005,
+  };
+
+  await merge(ctx, main, staging, expected, newUuids);
+});
+
+// TODO is this valuable? Is this hard for any reason?
+test("merge a third child", async (ctx: Context) => {
+  const main = `x-y x-z`;
+  const staging = `x-y x-z x-a`;
+  const expected = `x-y x-z x-a`;
+  const newUuids = {
+    a: 2006,
+    "x-a": 2007,
   };
 
   await merge(ctx, main, staging, expected, newUuids);

@@ -22,3 +22,19 @@ test("merge name change", async (ctx: Context) => {
 
   await merge(ctx, main, staging, expected);
 });
+
+/**
+ * TODO here:
+ *
+ * How should we declare options?
+ * The workflow DSL isn't a reflection of state file
+ * So we can't just dump them at the top
+ * I guess there are two kinds of data:
+ * - meta - automated stuff from the database, like timestamps and maybe lock version. This is ignored in merges.
+ * - options - user configured stuff like concurrency
+ * Why is meta different to openfn? Openfn is just a bucket of state preserved from the app
+ *
+ * ignore concurrency
+ * ignore lock version I guess?
+ * ignore timestamps
+ */
