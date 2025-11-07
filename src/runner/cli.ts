@@ -32,16 +32,22 @@ export const merge = async (
   const openfnyml = `
 dirs:
   projects: .
+formats:
+  project: json
   `;
   await Bun.write(path.join(options.dir, "openfn.yaml"), openfnyml);
 
   // Checkout the target so we're ready to merge
-  await $`${command} checkout ${source}.json ${log}`.cwd(options.dir);
+  await $`${command} checkout ${target}.json ${log}`.cwd(options.dir);
 
   // now merge
-  await $`${command} merge ${target}.json ${log}`.cwd(options.dir);
+  // workflows have no history so we need to force
+  // Do a weird thing and write the result to a different file
+  // Explicitly specify the target project because it's ambiguous (we've dumped so much stuff into the project dir!)
+  await $`${command} merge ${source}.json --base main.json ${log} --force --output-path result.json`.cwd(
+    options.dir
+  );
 
-  // Now return a project based on the filesystem
-  // (remember that merge doesn't update the project file)
-  return Project.from("fs", { root: options.dir });
+  // Now return a Project based on the generated state file
+  return Project.from("path", path.resolve(options.dir, "result.json"));
 };
