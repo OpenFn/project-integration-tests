@@ -81,7 +81,8 @@ export const setupTestDir = async (
   file: string,
   name: string
 ) => {
-  const p = path.join("tmp", folder, file, name);
+  const runner = process.env.OPENFN_RUNNER;
+  const p = path.join("tmp", runner, folder, file, name);
 
   await mkdir(p, { recursive: true });
 
