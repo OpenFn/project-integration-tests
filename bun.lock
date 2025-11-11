@@ -4,7 +4,7 @@
     "": {
       "name": "project-merge-test",
       "dependencies": {
-        "@openfn/project": "^0.8.0",
+        "@openfn/project": "^0.8.1",
         "ava": "^6.4.1",
         "rimraf": "^6.0.1",
       },
@@ -43,7 +43,7 @@
 
     "@openfn/logger": ["@openfn/logger@1.0.6", "", { "dependencies": { "@inquirer/confirm": "2.0.6", "chalk": "^5.6.2", "fast-safe-stringify": "^2.1.1", "figures": "^5.0.0" } }, "sha512-CPWp2pT4scb6DVeVfACSFRao1FRRXJrEAhan4/ea4WdCdxJkmp3nFLGlwOgyALMVjGkTwIzec1FnVYrqvv/d5Q=="],
 
-    "@openfn/project": ["@openfn/project@0.8.0", "", { "dependencies": { "@openfn/lexicon": "^1.2.6", "@openfn/logger": "1.0.6", "@types/lodash-es": "^4.17.12", "glob": "^11.0.2", "human-id": "^4.1.1", "lodash": "^4.17.21", "lodash-es": "^4.17.21", "ohm-js": "^17.2.1", "yaml": "^2.2.2" } }, "sha512-NJ3zg2+i4a3EOEFoBft84jzK6P57BWGV1vZ2DTE7P2XmA2kBDwlGbpgjD5sCNLvrvDQgDGyBJOybrB37RfS3OQ=="],
+    "@openfn/project": ["@openfn/project@0.8.1", "", { "dependencies": { "@openfn/lexicon": "^1.2.6", "@openfn/logger": "1.0.6", "@types/lodash-es": "^4.17.12", "glob": "^11.0.2", "human-id": "^4.1.1", "lodash": "^4.17.21", "lodash-es": "^4.17.21", "ohm-js": "^17.2.1", "yaml": "^2.2.2" } }, "sha512-w0PAnAjHpU4mLnkGEm0trVJjg/RdfaG1rpcf/8adiDy5ilDAJA3NeVo0eTFFoig9fkTboxISegP2bOWqXdlDzw=="],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
