@@ -49,10 +49,9 @@ export const merge = async (
     ([sourceUuid, newUuid]) => ["--uuid", `${sourceUuid}:${newUuid}`]
   );
 
-  await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs} -o ${outputAbs} ${uuidArgs}`.cwd(
-    lightningPath
-  );
-  // .quiet();
+  await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs} -o ${outputAbs} ${uuidArgs}`
+    .cwd(lightningPath)
+    .quiet();
 
   const resultRaw = await readFile(outputAbs, "utf8");
   const result = JSON.parse(resultRaw);
