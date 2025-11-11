@@ -58,13 +58,18 @@ test("ignore random key change", async (ctx: Context) => {
 // TODO should these go into a new suite called structure-basic?
 // Like these are tests on changing the workflow structure,
 // they don't affect node properties
+
 test("merge a new child of a leaf", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-y y-z`;
   const expected = `x-y y-z`;
+
+  // This both:
+  // 1. sets any newly generated UUIDs to these values in the merge result
+  // 2. sets the expected workflow to use these uuids
   const newUuids = {
-    z: 2004,
-    "y-z": 2005,
+    z: "new-node",
+    "y-z": "new-edge",
   };
 
   await merge(ctx, main, staging, expected, newUuids);
@@ -75,8 +80,8 @@ test("merge a new child of the root", async (ctx: Context) => {
   const staging = `x-y x-z`;
   const expected = `x-y x-z`;
   const newUuids = {
-    z: 2004,
-    "x-z": 2005,
+    z: "new-node",
+    "x-z": "new-edge",
   };
 
   await merge(ctx, main, staging, expected, newUuids);
@@ -88,8 +93,22 @@ test("merge a third child", async (ctx: Context) => {
   const staging = `x-y x-z x-a`;
   const expected = `x-y x-z x-a`;
   const newUuids = {
-    a: 2006,
-    "x-a": 2007,
+    a: "new-node",
+    "x-a": "new-edge",
+  };
+
+  await merge(ctx, main, staging, expected, newUuids);
+});
+
+test("merge two new child nodes", async (ctx: Context) => {
+  const main = `x-y`;
+  const staging = `x-y y-a y-b`;
+  const expected = `x-y y-a y-b`;
+  const newUuids = {
+    a: "a",
+    "y-a": "y-a",
+    b: "b",
+    "y-b": "y-b",
   };
 
   await merge(ctx, main, staging, expected, newUuids);

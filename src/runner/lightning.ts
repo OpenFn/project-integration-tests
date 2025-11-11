@@ -23,6 +23,9 @@ export const welcome = () => {
 
 type Options = {
   dir: string; // root dir to run in
+
+  // For new steps and edges, step/edge name: uuid
+  uuidMap: Record<string, string>;
 };
 
 export const test = async () => {
@@ -40,9 +43,16 @@ export const merge = async (
   const targetAbs = path.resolve(options.dir, target + ".json");
   const outputAbs = path.resolve(options.dir, "result.json");
 
-  await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs} -o ${outputAbs}`
-    .cwd(lightningPath)
-    .quiet();
+  // load the source project
+
+  const uuidArgs = Object.entries(options.uuidMap ?? {}).map(
+    ([sourceUuid, newUuid]) => ["--uuid", `${sourceUuid}:${newUuid}`]
+  );
+
+  await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs} -o ${outputAbs} ${uuidArgs}`.cwd(
+    lightningPath
+  );
+  // .quiet();
 
   const resultRaw = await readFile(outputAbs, "utf8");
   const result = JSON.parse(resultRaw);
@@ -56,8 +66,8 @@ export const merge = async (
     // in deep equality
     // Probably Project needs to handle sorting for us
     // in this serialization
-    wf.jobs = sortBy(wf.jobs, ["id"]);
-    wf.edges = sortBy(wf.edges, ["id"]);
+    wf.jobs = sortBy(wf.jobs, ["name"]);
+    wf.edges = sortBy(wf.edges, ["name"]);
   }
 
   const meta = {};

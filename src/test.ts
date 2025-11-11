@@ -147,7 +147,8 @@ export const testMerge = async (
   const runner = loadRunner();
 
   const mainProject = await gen(ctx, "main", main, 1000);
-  await gen(ctx, "staging", staging, 2000);
+
+  const stagingProject = await gen(ctx, "staging", staging, 2000);
 
   // handle UUID mapping
   const mainUuids: any = mainProject.getUUIDMap();
@@ -168,8 +169,29 @@ export const testMerge = async (
   );
   // console.log("expected:", expectedProject.workflows[0].steps[0]?.openfn?.uuid);
 
+  // Build a map of source UUIds to new target UUIDS
+  // where the new target ids have been preordained
+  const uuidMap = {};
+  // find this thing in the source
+  const map = stagingProject.getUUIDMap();
+  const workflowIds = Object.keys(map);
+  for (const wid of workflowIds) {
+    const wfmap = map[wid];
+    // map the workflow itself
+    if (wfmap.self in newUuids) {
+      uuidMap[wfmap.self] = newUuids[wid];
+    }
+
+    for (const id of Object.keys(wfmap.children)) {
+      if (id in newUuids) {
+        uuidMap[wfmap.children[id]] = newUuids[id];
+      }
+    }
+  }
+
   const result = await runner.merge("staging", "main", {
     dir: ctx.root,
+    uuidMap,
   });
   await ctx.serialize("result", result);
 
