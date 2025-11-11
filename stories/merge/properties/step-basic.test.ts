@@ -21,10 +21,27 @@ test("merge expression change", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-test("merge credential change", async (ctx: Context) => {
-  const main = `x(credential=a)-y`;
-  const staging = `x(credential=b)-y`;
-  const expected = `x(credential=b)-y`;
+test("ignore project credential change", async (ctx: Context) => {
+  const main = `x(project_credential_id=a)-y`;
+  const staging = `x(project_credential_id=b)-y`;
+  const expected = `x(project_credential_id=a)-y`;
+
+  await merge(ctx, main, staging, expected);
+});
+
+// TODO this might change in the near future
+test("ignore new project credential", async (ctx: Context) => {
+  const main = `x-y`;
+  const staging = `x(project_credential_id=b)-y`;
+  const expected = `x-y`;
+
+  await merge(ctx, main, staging, expected);
+});
+
+test("ignore keychain credential change", async (ctx: Context) => {
+  const main = `x(keychain_credential_id=a)-y`;
+  const staging = `x(keychain_credential_id=b)-y`;
+  const expected = `x(keychain_credential_id=a)-y`;
 
   await merge(ctx, main, staging, expected);
 });
