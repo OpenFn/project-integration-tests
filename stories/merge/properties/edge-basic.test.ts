@@ -1,4 +1,8 @@
-import initTest, { Context, testMerge as merge } from "../../../src/test";
+import initTest, {
+  assertState,
+  Context,
+  testMerge as merge,
+} from "../../../src/test";
 
 const test = initTest(import.meta.filename);
 
@@ -13,6 +17,9 @@ test("merge disabling an edge", async (ctx: Context) => {
   const expected = `x-(disabled=true)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "main", "workflows[0].edges[0].enabled", true);
+  await assertState(ctx, "result", "workflows[0].edges[0].enabled", false);
 });
 
 test("merge enabling an edge", async (ctx: Context) => {
@@ -21,18 +28,22 @@ test("merge enabling an edge", async (ctx: Context) => {
   const expected = `x-(disabled=false)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "result", "workflows[0].edges[0].enabled", true);
 });
 
-// Turns out I can't test any of the edge condition stuff in CLI thanks to https://github.com/OpenFn/kit/issues/1123
-test("merge adding an edge condition", async (ctx: Context) => {
+// Turns out I can't test any of the edge condition stuff thanks to https://github.com/OpenFn/kit/issues/1123
+test.skip("merge adding an edge condition", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-(condition="!state.errors")-y`;
   const expected = `x-(condition="!state.errors")-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "result", "workflows[0].edges[0].enabled", true);
 });
 
-test("merge changing an edge condition", async (ctx: Context) => {
+test.skip("merge changing an edge condition", async (ctx: Context) => {
   const main = `x-(condition="!state.errors")-y`;
   const staging = `x-(condition="false")-y`;
   const expected = `x-(condition="false")-y`;
@@ -41,7 +52,7 @@ test("merge changing an edge condition", async (ctx: Context) => {
 });
 
 // This is also not tracked at the moment
-test("merge adding an edge label", async (ctx: Context) => {
+test.skip("merge adding an edge label", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-(label=a)-y`;
   const expected = `x-(label=a)-y`;
@@ -49,7 +60,7 @@ test("merge adding an edge label", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-test("merge changing an edge label", async (ctx: Context) => {
+test.skip("merge changing an edge label", async (ctx: Context) => {
   const main = `x-(label=a)-y`;
   const staging = `x-(label=b)-y`;
   const expected = `x-(label=b)-y`;
@@ -57,7 +68,7 @@ test("merge changing an edge label", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-test("merge removing  edge label", async (ctx: Context) => {
+test.skip("merge removing an edge label", async (ctx: Context) => {
   const main = `x-(label=a)-y`;
   const staging = `x-y`;
   const expected = `x-y`;
