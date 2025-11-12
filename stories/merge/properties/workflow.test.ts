@@ -1,6 +1,7 @@
+import { test as bunTest } from "bun:test";
 import initTest, { Context, testMerge as merge } from "../../../src/test";
 
-const test = initTest(import.meta.filename);
+const test = initTest(bunTest, import.meta.filename);
 
 // This doesn't work = unless there's a mapping it'll create a new workflow
 test.skip("merge name change", async (ctx: Context) => {

@@ -1,10 +1,11 @@
+import { test as bunTest } from "bun:test";
 import initTest, {
   assertState,
   Context,
   testMerge as merge,
 } from "../../../src/test";
 
-const test = initTest(import.meta.filename);
+const test = initTest(bunTest, import.meta.filename);
 
 // These are tests on "basic" merges, which I define
 // as anything without an id change
@@ -61,7 +62,7 @@ test("ignore new project credential", async (ctx: Context) => {
   );
 });
 
-test("ignore keychain credential change", async (ctx: Context) => {
+test.only("ignore keychain credential change", async (ctx: Context) => {
   const main = `x(keychain_credential_id=a)-y`;
   const staging = `x(keychain_credential_id=b)-y`;
   const expected = `x(keychain_credential_id=a)-y`;

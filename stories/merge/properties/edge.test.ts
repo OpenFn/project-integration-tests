@@ -1,10 +1,11 @@
+import { test as bunTest } from "bun:test";
 import initTest, {
   assertState,
   Context,
   testMerge as merge,
 } from "../../../src/test";
 
-const test = initTest(import.meta.filename);
+const test = initTest(bunTest, import.meta.filename);
 
 // These are tests on "basic" merges on edges, which I define
 // as anything without an id change

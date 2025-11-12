@@ -1,7 +1,7 @@
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
 import { get } from "lodash-es";
-import { test as bunTest, expect } from "bun:test";
+import { expect } from "bun:test";
 import Project, { generateProject } from "@openfn/project";
 import loadRunner from "./runner";
 
@@ -39,7 +39,7 @@ export class Context {
   }
 }
 
-function init(filename: string /* import.meta.filename */) {
+function init(bunTest: any, filename: string /* import.meta.filename */) {
   const wrapTest = (name: string, fn: (ctx: Context) => void) => {
     //  register with bun - this must be synchronous!
     return async () => {
@@ -154,7 +154,7 @@ export const testMerge = async (
   expected: string,
   options: TestMergeOptions = {}
 ) => {
-  const { newUuids, passUUIDsToMerge = true } = options;
+  const { newUuids = {}, passUUIDsToMerge = true } = options;
   const runner = loadRunner();
 
   const mainProject = await gen(ctx, "main", main, 1000);
@@ -199,7 +199,6 @@ export const testMerge = async (
       }
     }
   }
-  console.log({ uuidMap });
 
   const result = await runner.merge("staging", "main", {
     dir: ctx.root,
