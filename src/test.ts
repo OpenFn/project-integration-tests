@@ -1,5 +1,6 @@
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
+import { get } from "lodash-es";
 import { test as bunTest, expect } from "bun:test";
 import Project, { generateProject } from "@openfn/project";
 import loadRunner from "./runner";
@@ -12,6 +13,7 @@ export class Context {
   /** Safe/escaped name of this test */
   name: string;
   uuidSeed = 0;
+  fileCache: Record<string, unknown> = {};
   constructor(root: string, name: string) {
     this.root = root;
     this.name = name;
@@ -20,11 +22,14 @@ export class Context {
     return Bun.write(path.join(this.root, filename), contents);
   }
   async loadFile(fileName: string) {
-    let file = await Bun.file(path.join(this.root, fileName)).text();
-    if (fileName.endsWith(".json")) {
-      file = JSON.parse(file);
+    if (!this.fileCache[fileName]) {
+      let file = await Bun.file(path.join(this.root, fileName)).text();
+      if (fileName.endsWith(".json")) {
+        file = JSON.parse(file);
+      }
+      this.fileCache[fileName] = file;
     }
-    return file;
+    return this.fileCache[fileName];
   }
   // serialize a project into a yaml file
   async serialize(name: string, project: Project) {
@@ -147,7 +152,7 @@ export const testMerge = async (
   const runner = loadRunner();
 
   const mainProject = await gen(ctx, "main", main, 1000);
-
+  console.log(mainProject.workflows[0].steps[0]);
   const stagingProject = await gen(ctx, "staging", staging, 2000);
 
   // handle UUID mapping
@@ -210,4 +215,15 @@ export const testMerge = async (
   // OTOH, the way a project loads and serializes should be consistent,
   // and a Project should have a good way of generating a diff
   //projectEquals(result, expectedProject);
+};
+
+export const assertState = async (
+  ctx: Context,
+  name: string,
+  path: any,
+  expectedValue: any
+) => {
+  const stateFile = await ctx.loadFile(`${name}.json`);
+  const fail = `State file does not contain the expected value at ${path}`;
+  expect(get(stateFile, path), fail).toEqual(expectedValue);
 };

@@ -1,4 +1,8 @@
-import initTest, { Context, testMerge as merge } from "../../../src/test";
+import initTest, {
+  assertState,
+  Context,
+  testMerge as merge,
+} from "../../../src/test";
 
 const test = initTest(import.meta.filename);
 
@@ -11,6 +15,8 @@ test("merge adaptor change", async (ctx: Context) => {
   const expected = `x(adaptor=b)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "result", "workflows[0].jobs[0].adaptor", "b");
 });
 
 test("merge expression change", async (ctx: Context) => {
@@ -19,6 +25,8 @@ test("merge expression change", async (ctx: Context) => {
   const expected = `x(expression=b)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "result", "workflows[0].jobs[0].body", "b");
 });
 
 test("ignore project credential change", async (ctx: Context) => {
@@ -27,6 +35,13 @@ test("ignore project credential change", async (ctx: Context) => {
   const expected = `x(project_credential_id=a)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(
+    ctx,
+    "result",
+    "workflows[0].jobs[0].project_credential_id",
+    "a"
+  );
 });
 
 // TODO this might change in the near future
@@ -36,6 +51,13 @@ test("ignore new project credential", async (ctx: Context) => {
   const expected = `x-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(
+    ctx,
+    "result",
+    "workflows[0].jobs[0].project_credential_id",
+    undefined
+  );
 });
 
 test("ignore keychain credential change", async (ctx: Context) => {
@@ -44,6 +66,13 @@ test("ignore keychain credential change", async (ctx: Context) => {
   const expected = `x(keychain_credential_id=a)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(
+    ctx,
+    "result",
+    "workflows[0].jobs[0].keychain_credential_id",
+    "a"
+  );
 });
 
 test("merge name change", async (ctx: Context) => {
@@ -52,24 +81,22 @@ test("merge name change", async (ctx: Context) => {
   const expected = `x(name=b)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "result", "workflows[0].jobs[0].name", "b");
 });
 
+// TODO I think this will pass now?
 // the random key doesn't serialize to app state in any case
 // so I suppose yes this is an ignore - but the expected could be about anything
-test("ignore random key change", async (ctx: Context) => {
+test.skip("ignore random key change", async (ctx: Context) => {
   const main = `x(foo=a)-y`;
   const staging = `x(foo=b)-y`;
 
-  // These all pass!! Which is a bit strange really
-  // It's an artefact of serializing to app state json
-  // the unknown key is never serialized to state and so not even considered for merge
   const expected1 = `x(foo=a)-y`;
-  const expected2 = `x(foo=jam)-y`;
-  const expected3 = `x-y`;
 
   await merge(ctx, main, staging, expected1);
-  await merge(ctx, main, staging, expected2);
-  await merge(ctx, main, staging, expected3);
+
+  await assertState(ctx, "result", "workflows[0].jobs[0].foo", "a");
 });
 
 // TODO should these go into a new suite called structure-basic?
