@@ -54,7 +54,18 @@ function init(bunTest: any, filename: string /* import.meta.filename */) {
     };
   };
 
-  const folder = path.basename(path.dirname(filename));
+  let parentFolder = [];
+  let currentDir = path.dirname(filename);
+  while (currentDir) {
+    const next = path.basename(currentDir);
+    if (next === "stories") {
+      break;
+    }
+    parentFolder.push(next);
+    currentDir = path.dirname(currentDir);
+  }
+
+  const folder = parentFolder.reverse().join("/");
   const file = path.basename(filename, ".test.ts");
 
   // Util to wrap tests in some infrastructure to generate a working folder
@@ -86,7 +97,7 @@ export const setupTestDir = async (
   file: string,
   name: string
 ) => {
-  const runner = process.env.OPENFN_RUNNER;
+  const runner = process.env.OPENFN_RUNNER!;
   const p = path.join("tmp", runner, folder, file, name);
 
   await mkdir(p, { recursive: true });

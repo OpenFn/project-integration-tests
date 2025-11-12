@@ -1,8 +1,9 @@
+import { test as bunTest } from "bun:test";
 import Project from "@openfn/project";
 
 import initTest, { testMerge as merge } from "../../src/test";
 
-const test = initTest(import.meta.filename);
+const test = initTest(bunTest, import.meta.filename);
 
 test.skip("should merge two workflows", async (ctx) => {
   const main = `x(type=webhook)-y

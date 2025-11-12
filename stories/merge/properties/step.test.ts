@@ -62,7 +62,7 @@ test("ignore new project credential", async (ctx: Context) => {
   );
 });
 
-test.only("ignore keychain credential change", async (ctx: Context) => {
+test("ignore keychain credential change", async (ctx: Context) => {
   const main = `x(keychain_credential_id=a)-y`;
   const staging = `x(keychain_credential_id=b)-y`;
   const expected = `x(keychain_credential_id=a)-y`;
