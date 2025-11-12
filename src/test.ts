@@ -1,6 +1,7 @@
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
-import { test as bunTest, expect } from "bun:test";
+import { get } from "lodash-es";
+import { expect } from "bun:test";
 import Project, { generateProject } from "@openfn/project";
 import loadRunner from "./runner";
 
@@ -12,6 +13,7 @@ export class Context {
   /** Safe/escaped name of this test */
   name: string;
   uuidSeed = 0;
+  fileCache: Record<string, unknown> = {};
   constructor(root: string, name: string) {
     this.root = root;
     this.name = name;
@@ -20,11 +22,14 @@ export class Context {
     return Bun.write(path.join(this.root, filename), contents);
   }
   async loadFile(fileName: string) {
-    let file = await Bun.file(path.join(this.root, fileName)).text();
-    if (fileName.endsWith(".json")) {
-      file = JSON.parse(file);
+    if (!this.fileCache[fileName]) {
+      let file = await Bun.file(path.join(this.root, fileName)).text();
+      if (fileName.endsWith(".json")) {
+        file = JSON.parse(file);
+      }
+      this.fileCache[fileName] = file;
     }
-    return file;
+    return this.fileCache[fileName];
   }
   // serialize a project into a yaml file
   async serialize(name: string, project: Project) {
@@ -34,7 +39,7 @@ export class Context {
   }
 }
 
-function init(filename: string /* import.meta.filename */) {
+function init(bunTest: any, filename: string /* import.meta.filename */) {
   const wrapTest = (name: string, fn: (ctx: Context) => void) => {
     //  register with bun - this must be synchronous!
     return async () => {
@@ -49,7 +54,18 @@ function init(filename: string /* import.meta.filename */) {
     };
   };
 
-  const folder = path.basename(path.dirname(filename));
+  let parentFolder = [];
+  let currentDir = path.dirname(filename);
+  while (currentDir) {
+    const next = path.basename(currentDir);
+    if (next === "stories") {
+      break;
+    }
+    parentFolder.push(next);
+    currentDir = path.dirname(currentDir);
+  }
+
+  const folder = parentFolder.reverse().join("/");
   const file = path.basename(filename, ".test.ts");
 
   // Util to wrap tests in some infrastructure to generate a working folder
@@ -81,7 +97,8 @@ export const setupTestDir = async (
   file: string,
   name: string
 ) => {
-  const p = path.join("tmp", folder, file, name);
+  const runner = process.env.OPENFN_RUNNER!;
+  const p = path.join("tmp", runner, folder, file, name);
 
   await mkdir(p, { recursive: true });
 
@@ -136,17 +153,23 @@ export const projectEquals = (a: Project, b: Project) => {
   expect(a_json).toEqual(b_json);
 };
 
+export type TestMergeOptions = Partial<{
+  newUuids: any;
+  passUUIDsToMerge: boolean;
+}>;
+
 export const testMerge = async (
   ctx: Context,
   main: string,
   staging: string,
   expected: string,
-  newUuids = {}
+  options: TestMergeOptions = {}
 ) => {
+  const { newUuids = {}, passUUIDsToMerge = true } = options;
   const runner = loadRunner();
 
   const mainProject = await gen(ctx, "main", main, 1000);
-  await gen(ctx, "staging", staging, 2000);
+  const stagingProject = await gen(ctx, "staging", staging, 2000);
 
   // handle UUID mapping
   const mainUuids: any = mainProject.getUUIDMap();
@@ -165,10 +188,32 @@ export const testMerge = async (
     "main",
     mainProject.openfn?.uuid
   );
-  // console.log("expected:", expectedProject.workflows[0].steps[0]?.openfn?.uuid);
+
+  // Build a map of source UUIds to new target UUIDS
+  // where the new target ids have been preordained
+  const uuidMap = {};
+  if (passUUIDsToMerge) {
+    // find this thing in the source
+    const map = stagingProject.getUUIDMap();
+    const workflowIds = Object.keys(map);
+    for (const wid of workflowIds) {
+      const wfmap = map[wid];
+      // map the workflow itself
+      if (wfmap.self in newUuids) {
+        uuidMap[wfmap.self] = newUuids[wid];
+      }
+
+      for (const id of Object.keys(wfmap.children)) {
+        if (id in newUuids) {
+          uuidMap[wfmap.children[id]] = newUuids[id];
+        }
+      }
+    }
+  }
 
   const result = await runner.merge("staging", "main", {
     dir: ctx.root,
+    uuidMap,
   });
   await ctx.serialize("result", result);
 
@@ -187,4 +232,15 @@ export const testMerge = async (
   // OTOH, the way a project loads and serializes should be consistent,
   // and a Project should have a good way of generating a diff
   //projectEquals(result, expectedProject);
+};
+
+export const assertState = async (
+  ctx: Context,
+  name: string,
+  path: any,
+  expectedValue: any
+) => {
+  const stateFile = await ctx.loadFile(`${name}.json`);
+  const fail = `State file does not contain the expected value at ${path}`;
+  expect(get(stateFile, path), fail).toEqual(expectedValue);
 };

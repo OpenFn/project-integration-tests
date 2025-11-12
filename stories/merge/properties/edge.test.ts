@@ -1,6 +1,11 @@
-import initTest, { Context, testMerge as merge } from "../../../src/test";
+import { test as bunTest } from "bun:test";
+import initTest, {
+  assertState,
+  Context,
+  testMerge as merge,
+} from "../../../src/test";
 
-const test = initTest(import.meta.filename);
+const test = initTest(bunTest, import.meta.filename);
 
 // These are tests on "basic" merges on edges, which I define
 // as anything without an id change
@@ -13,6 +18,9 @@ test("merge disabling an edge", async (ctx: Context) => {
   const expected = `x-(disabled=true)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "main", "workflows[0].edges[0].enabled", true);
+  await assertState(ctx, "result", "workflows[0].edges[0].enabled", false);
 });
 
 test("merge enabling an edge", async (ctx: Context) => {
@@ -21,6 +29,8 @@ test("merge enabling an edge", async (ctx: Context) => {
   const expected = `x-(disabled=false)-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "result", "workflows[0].edges[0].enabled", true);
 });
 
 // Turns out I can't test any of the edge condition stuff thanks to https://github.com/OpenFn/kit/issues/1123
@@ -30,6 +40,8 @@ test.skip("merge adding an edge condition", async (ctx: Context) => {
   const expected = `x-(condition="!state.errors")-y`;
 
   await merge(ctx, main, staging, expected);
+
+  await assertState(ctx, "result", "workflows[0].edges[0].enabled", true);
 });
 
 test.skip("merge changing an edge condition", async (ctx: Context) => {
@@ -57,7 +69,7 @@ test.skip("merge changing an edge label", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-test.skip("merge removing  edge label", async (ctx: Context) => {
+test.skip("merge removing an edge label", async (ctx: Context) => {
   const main = `x-(label=a)-y`;
   const staging = `x-y`;
   const expected = `x-y`;

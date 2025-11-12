@@ -4,7 +4,6 @@ import { $ } from "bun";
 import { loadArgs } from "./util";
 
 const options = loadArgs();
-
 let command = options.cmd ?? "openfn";
 let logOption = options.log ?? "none";
 
