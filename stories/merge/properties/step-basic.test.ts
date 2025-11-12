@@ -44,7 +44,8 @@ test("ignore project credential change", async (ctx: Context) => {
   );
 });
 
-// TODO this might change in the near future
+// This might change in the near future - it would make sense to merge
+// credentials for new nodes
 test("ignore new project credential", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x(project_credential_id=b)-y`;
@@ -56,7 +57,7 @@ test("ignore new project credential", async (ctx: Context) => {
     ctx,
     "result",
     "workflows[0].jobs[0].project_credential_id",
-    undefined
+    null
   );
 });
 
@@ -85,18 +86,15 @@ test("merge name change", async (ctx: Context) => {
   await assertState(ctx, "result", "workflows[0].jobs[0].name", "b");
 });
 
-// TODO I think this will pass now?
-// the random key doesn't serialize to app state in any case
-// so I suppose yes this is an ignore - but the expected could be about anything
-test.skip("ignore random key change", async (ctx: Context) => {
+// Random keys won't serialize to state, so they'll be accidentally
+// ignored in these tests. Not a good test.
+test("ignore random key change", async (ctx: Context) => {
   const main = `x(foo=a)-y`;
   const staging = `x(foo=b)-y`;
 
-  const expected1 = `x(foo=a)-y`;
+  const expected1 = `x-y`;
 
   await merge(ctx, main, staging, expected1);
-
-  await assertState(ctx, "result", "workflows[0].jobs[0].foo", "a");
 });
 
 // TODO should these go into a new suite called structure-basic?

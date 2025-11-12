@@ -152,7 +152,6 @@ export const testMerge = async (
   const runner = loadRunner();
 
   const mainProject = await gen(ctx, "main", main, 1000);
-  console.log(mainProject.workflows[0].steps[0]);
   const stagingProject = await gen(ctx, "staging", staging, 2000);
 
   // handle UUID mapping
