@@ -5,7 +5,7 @@ import initTest, { testMerge as merge } from "../../src/test";
 
 const test = initTest(bunTest, import.meta.filename);
 
-test.skip("should merge two workflows", async (ctx) => {
+test("should merge two workflows", async (ctx) => {
   const main = `x(type=webhook)-y
       y-z(adaptor=http)`;
 
