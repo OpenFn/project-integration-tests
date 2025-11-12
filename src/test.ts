@@ -142,13 +142,19 @@ export const projectEquals = (a: Project, b: Project) => {
   expect(a_json).toEqual(b_json);
 };
 
+export type TestMergeOptions = Partial<{
+  newUuids: any;
+  passUUIDsToMerge: boolean;
+}>;
+
 export const testMerge = async (
   ctx: Context,
   main: string,
   staging: string,
   expected: string,
-  newUuids = {}
+  options: TestMergeOptions = {}
 ) => {
+  const { newUuids, passUUIDsToMerge = true } = options;
   const runner = loadRunner();
 
   const mainProject = await gen(ctx, "main", main, 1000);
@@ -171,27 +177,29 @@ export const testMerge = async (
     "main",
     mainProject.openfn?.uuid
   );
-  // console.log("expected:", expectedProject.workflows[0].steps[0]?.openfn?.uuid);
 
   // Build a map of source UUIds to new target UUIDS
   // where the new target ids have been preordained
   const uuidMap = {};
-  // find this thing in the source
-  const map = stagingProject.getUUIDMap();
-  const workflowIds = Object.keys(map);
-  for (const wid of workflowIds) {
-    const wfmap = map[wid];
-    // map the workflow itself
-    if (wfmap.self in newUuids) {
-      uuidMap[wfmap.self] = newUuids[wid];
-    }
+  if (passUUIDsToMerge) {
+    // find this thing in the source
+    const map = stagingProject.getUUIDMap();
+    const workflowIds = Object.keys(map);
+    for (const wid of workflowIds) {
+      const wfmap = map[wid];
+      // map the workflow itself
+      if (wfmap.self in newUuids) {
+        uuidMap[wfmap.self] = newUuids[wid];
+      }
 
-    for (const id of Object.keys(wfmap.children)) {
-      if (id in newUuids) {
-        uuidMap[wfmap.children[id]] = newUuids[id];
+      for (const id of Object.keys(wfmap.children)) {
+        if (id in newUuids) {
+          uuidMap[wfmap.children[id]] = newUuids[id];
+        }
       }
     }
   }
+  console.log({ uuidMap });
 
   const result = await runner.merge("staging", "main", {
     dir: ctx.root,

@@ -22,7 +22,7 @@ test("merge a new child of a leaf", async (ctx: Context) => {
     "y-z": "new-edge",
   };
 
-  await merge(ctx, main, staging, expected, newUuids);
+  await merge(ctx, main, staging, expected, { newUuids });
 });
 
 test("merge a new child of the root", async (ctx: Context) => {
@@ -34,7 +34,7 @@ test("merge a new child of the root", async (ctx: Context) => {
     "x-z": "new-edge",
   };
 
-  await merge(ctx, main, staging, expected, newUuids);
+  await merge(ctx, main, staging, expected, { newUuids });
 });
 
 // TODO is this valuable? Is this hard for any reason?
@@ -47,7 +47,7 @@ test("merge a third child", async (ctx: Context) => {
     "x-a": "new-edge",
   };
 
-  await merge(ctx, main, staging, expected, newUuids);
+  await merge(ctx, main, staging, expected, { newUuids });
 });
 
 test("merge two new child nodes", async (ctx: Context) => {
@@ -61,7 +61,7 @@ test("merge two new child nodes", async (ctx: Context) => {
     "y-b": "y-b",
   };
 
-  await merge(ctx, main, staging, expected, newUuids);
+  await merge(ctx, main, staging, expected, { newUuids });
 });
 
 test("merge a new edge", async (ctx: Context) => {
@@ -73,7 +73,7 @@ test("merge a new edge", async (ctx: Context) => {
     "x-z": "new-edge",
   };
 
-  await merge(ctx, main, staging, expected, newUuids);
+  await merge(ctx, main, staging, expected, { newUuids });
 
   await assertState(ctx, "result", "workflows[0].edges[1].source_job_id", 1001);
   await assertState(ctx, "result", "workflows[0].edges[1].target_job_id", 1004);

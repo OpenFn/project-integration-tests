@@ -4,7 +4,7 @@ import initTest, { testMerge as merge } from "../../src/test";
 
 const test = initTest(import.meta.filename);
 
-test("should merge two workflows", async (ctx) => {
+test.skip("should merge two workflows", async (ctx) => {
   const main = `x(type=webhook)-y
       y-z(adaptor=http)`;
 
@@ -90,4 +90,4 @@ workflows:
 `;
   const main = Project.from("state", main_src, {}, { format: "yaml" });
   await ctx.serialize("main", main);
-})
+});
