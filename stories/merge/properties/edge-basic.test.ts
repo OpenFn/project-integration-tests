@@ -23,8 +23,8 @@ test("merge enabling an edge", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-// Turns out I can't test any of the edge condition stuff thanks to https://github.com/OpenFn/kit/issues/1123
-test.skip("merge adding an edge condition", async (ctx: Context) => {
+// Turns out I can't test any of the edge condition stuff in CLI thanks to https://github.com/OpenFn/kit/issues/1123
+test("merge adding an edge condition", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-(condition="!state.errors")-y`;
   const expected = `x-(condition="!state.errors")-y`;
@@ -32,7 +32,7 @@ test.skip("merge adding an edge condition", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-test.skip("merge changing an edge condition", async (ctx: Context) => {
+test("merge changing an edge condition", async (ctx: Context) => {
   const main = `x-(condition="!state.errors")-y`;
   const staging = `x-(condition="false")-y`;
   const expected = `x-(condition="false")-y`;
@@ -41,7 +41,7 @@ test.skip("merge changing an edge condition", async (ctx: Context) => {
 });
 
 // This is also not tracked at the moment
-test.skip("merge adding an edge label", async (ctx: Context) => {
+test("merge adding an edge label", async (ctx: Context) => {
   const main = `x-y`;
   const staging = `x-(label=a)-y`;
   const expected = `x-(label=a)-y`;
@@ -49,7 +49,7 @@ test.skip("merge adding an edge label", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-test.skip("merge changing an edge label", async (ctx: Context) => {
+test("merge changing an edge label", async (ctx: Context) => {
   const main = `x-(label=a)-y`;
   const staging = `x-(label=b)-y`;
   const expected = `x-(label=b)-y`;
@@ -57,7 +57,7 @@ test.skip("merge changing an edge label", async (ctx: Context) => {
   await merge(ctx, main, staging, expected);
 });
 
-test.skip("merge removing  edge label", async (ctx: Context) => {
+test("merge removing  edge label", async (ctx: Context) => {
   const main = `x-(label=a)-y`;
   const staging = `x-y`;
   const expected = `x-y`;
