@@ -25,21 +25,18 @@ jobs:
         with:
           repository: openfn/lightning
           path: resources/lightning
-      # - uses: erlef/setup-elixir@v1
-      #   with:
-      #     otp-version: 26
-      #     elixir-version: "1.18.3"
-      # - run: sudo apt-get install -y libsodium-dev
-      # - run: mix deps.get
-      #   working-directory: resources/lightning
-
-      # - run: mix compile
-      #   working-directory: resources/lightning
-
-      - run: pwd
+      - uses: erlef/setup-elixir@v1
+        with:
+          otp-version: 26
+          elixir-version: "1.18.3"
+      - run: sudo apt-get install -y libsodium-dev
+      - run: mix deps.get
         working-directory: resources/lightning
 
-      - run: pwd
+      - run: mix compile
+        working-directory: resources/lightning
+
+      - run: ls stories/merge
 
       - run: bun test stories:lightning
         env:
