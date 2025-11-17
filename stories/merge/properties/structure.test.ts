@@ -79,3 +79,15 @@ test("merge a new edge", async (ctx: Context) => {
   await assertState(ctx, "result", "workflows[0].edges[1].source_job_id", 1001);
   await assertState(ctx, "result", "workflows[0].edges[1].target_job_id", 1004);
 });
+
+test("reparent a node", async (ctx: Context) => {
+  const main = `x-y y-z`;
+  const staging = `x-y x-z`;
+  const expected = `x-y x-z`;
+
+  const newUuids = {
+    "x-z": "new-edge",
+  };
+
+  await merge(ctx, main, staging, expected, { newUuids });
+});

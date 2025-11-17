@@ -48,6 +48,7 @@ export const merge = async (
   const uuidArgs = Object.entries(options.uuidMap ?? {}).map(
     ([sourceUuid, newUuid]) => ["--uuid", `${sourceUuid}:${newUuid}`]
   );
+  console.log(uuidArgs);
 
   await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs} -o ${outputAbs} ${uuidArgs}`
     .cwd(lightningPath)
@@ -67,6 +68,11 @@ export const merge = async (
     // in this serialization
     wf.jobs = sortBy(wf.jobs, ["name"]);
     wf.edges = sortBy(wf.edges, ["name"]);
+
+    // The merge task will mark edges for deletion
+    // let's actally delete them to not confuse the tests
+    wf.jobs = wf.jobs.filter((j: any) => !j.delete);
+    wf.edges = wf.edges.filter((e: any) => !e.delete);
   }
 
   const meta = {};
