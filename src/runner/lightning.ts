@@ -48,7 +48,6 @@ export const merge = async (
   const uuidArgs = Object.entries(options.uuidMap ?? {}).map(
     ([sourceUuid, newUuid]) => ["--uuid", `${sourceUuid}:${newUuid}`]
   );
-  console.log(uuidArgs);
 
   await $`mix lightning.merge_projects ${sourceAbs} ${targetAbs} -o ${outputAbs} ${uuidArgs}`
     .cwd(lightningPath)
