@@ -1,6 +1,7 @@
+import { test as bunTest } from "bun:test";
 import initTest, { Context, testMerge as merge } from "../../../src/test";
 
-const test = initTest(import.meta.filename);
+const test = initTest(bunTest, import.meta.filename);
 
 // tests of merging top level project properties
 // ie, credential access, name change

@@ -8,7 +8,7 @@ if (!OPENFN_RUNNER) {
     "ERROR: OPENFN_RUNNER not set. Specify a runner to execute stories."
   );
   abort = true;
-} else if (!/(^(cli|lighting)$)/.test(OPENFN_RUNNER)) {
+} else if (!/(^(cli|lightning)$)/.test(OPENFN_RUNNER)) {
   console.error(
     `ERROR: Invalid runner "${OPENFN_RUNNER}". Pass "cli" or "lightning"`
   );

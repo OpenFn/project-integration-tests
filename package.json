@@ -6,9 +6,9 @@
   "scripts": {
     "clean": "rimraf tmp",
     "test:unit": "bun test ./test",
-    "stories": "bun test stories --preload ./src/preload.ts",
+    "stories": "bun test ./stories --preload ./src/preload.ts",
     "stories:cli": "OPENFN_RUNNER=cli bun stories",
-    "stories:lightning": "OPENFN_RUNNER=lighting bun stories"
+    "stories:lightning": "OPENFN_RUNNER=lightning bun stories"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -17,7 +17,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@openfn/project": "^0.8.0",
+    "@openfn/project": "^0.9.0",
     "ava": "^6.4.1",
     "rimraf": "^6.0.1"
   }
