@@ -17,14 +17,14 @@ jobs:
     name: stories-lightning
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v4
-      # - uses: oven-sh/setup-bun@v2
-      # - run: bun install
-      # - name: Checkout Lightning
-      #   uses: actions/checkout@v2
-      #   with:
-      #     repository: openfn/lightning
-      #     path: resources/lightning
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Checkout Lightning
+        uses: actions/checkout@v2
+        with:
+          repository: openfn/lightning
+          path: resources/lightning
       # - uses: erlef/setup-elixir@v1
       #   with:
       #     otp-version: 26
